@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { User, IUserDocument } from '../models/user.model.js';
-import { RegisterInput } from '../validators/auth.validator.js';
+import { RegisterInput, LoginInput } from '../validators/auth.validator.js';
 import { AppError } from '../utils/app-error.js';
 import { signToken } from '../utils/token.js';
 
@@ -32,5 +32,27 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  public static async login(input: LoginInput): Promise<{ user: IUserDocument; token: string }> {
+    const { email, password } = input;
+
+    
+    const user = await User.findOne({ email });
+    if (!user) {
+      
+      throw new AppError('Invalid email or password', 401);
+    }
+
+    
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new AppError('Invalid email or password', 401);
+    }
+
+    
+    const token = signToken({ userId: user._id.toString() });
+
+    return { user, token };
   }
 }
