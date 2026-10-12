@@ -30,9 +30,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 app.use('/api', generalLimiter);
 app.use('/api', healthRouter);
-
-app.use('/api', healthRouter);
-app.use('/api/auth',authLimiter, authRouter);
+app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/urls', urlRouter);
 app.use('/s', redirectRouter);
 
