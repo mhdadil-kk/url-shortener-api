@@ -7,6 +7,8 @@ import { healthRouter } from './routes/health.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { AppError } from './utils/app-error.js';
 
+import { authRouter } from './routes/auth.routes.js';
+
 const app = express();
 
 
@@ -26,6 +28,9 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 app.use('/api', healthRouter);
+
+app.use('/api', healthRouter);
+app.use('/api/auth', authRouter);
 
 app.use((req, _res, next) => {
   next(new AppError(`Cannot find ${req.method} ${req.originalUrl} on this server`, 404));
