@@ -2,7 +2,8 @@ import { Schema, model, Document, Types } from 'mongoose';
 
 export interface IUser {
   email: string;
-  password: string;
+  passwordHash: string;
+  isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,17 +22,21 @@ const userSchema = new Schema<IUserDocument>(
       trim: true,
       index: true,
     },
-    password: {
+    passwordHash: {
       type: String,
       required: [true, 'Password hash is required'],
-      select: true, 
+      select: true,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   {
     timestamps: true,
     toJSON: {
       transform(_doc, ret) {
-        delete (ret as Record<string, unknown>).password;
+        delete (ret as Record<string, unknown>).passwordHash;
         delete (ret as Record<string, unknown>).__v;
         return ret;
       },
