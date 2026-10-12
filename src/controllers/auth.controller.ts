@@ -21,7 +21,7 @@ export class AuthController {
                 message: 'User registered successfully',
                 data: {
                     user,
-                  
+
                     token,
                 },
             });
@@ -51,6 +51,26 @@ export class AuthController {
         } catch (error) {
             next(error);
         }
+    }
+
+    public static async getMe(req: Request, res: Response): Promise<void> {
+        res.status(200).json({
+            status: 'success',
+            data: {
+                user: req.user,
+            },
+        });
+    }
+    public static async logout(_req: Request, res: Response): Promise<void> {
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: env.NODE_ENV === 'production',
+            sameSite: 'lax',
+        });
+        res.status(200).json({
+            status: 'success',
+            message: 'Logged out successfully',
+        });
     }
 }
 
