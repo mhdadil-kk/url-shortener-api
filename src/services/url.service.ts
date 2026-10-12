@@ -38,4 +38,48 @@ export class UrlService {
     
     throw new AppError('Unable to generate unique short code. Please try again.', 500);
   }
+
+    public static async getUserUrls(userId: Types.ObjectId): Promise<IUrlDocument[]> {
+    return Url.find({ userId }).sort({ createdAt: -1 });
+  }
+
+  public static async getUrlById(urlId: string, userId: Types.ObjectId): Promise<IUrlDocument> {
+    if (!Types.ObjectId.isValid(urlId)) {
+      throw new AppError('Invalid URL ID format', 400);
+    }
+    const url = await Url.findById(urlId);
+    if (!url) {
+      throw new AppError('URL record not found', 404);
+    }
+    if (!url.userId.equals(userId)) {
+      throw new AppError('Forbidden: You do not have permission to view this resource', 403);
+    }
+    return url;
+  }
+
+  public static async deleteUrl(urlId: string, userId: Types.ObjectId): Promise<void> {
+    if (!Types.ObjectId.isValid(urlId)) {
+      throw new AppError('Invalid URL ID format', 400);
+    }
+    const url = await Url.findById(urlId);
+    if (!url) {
+      throw new AppError('URL record not found', 404);
+    }
+    if (!url.userId.equals(userId)) {
+      throw new AppError('Forbidden: You do not have permission to delete this resource', 403);
+    }
+    await Url.findByIdAndDelete(urlId);
+  }
+
+  public static async getOriginalUrlAndTrackClick(shortCode: string): Promise<string> {
+    const url = await Url.findOneAndUpdate(
+      { shortCode },
+      { $inc: { clicks: 1 } },
+      { new: true }
+    );
+    if (!url) {
+      throw new AppError('Short URL not found or has expired', 404);
+    }
+    return url.originalUrl;
+  }
 }

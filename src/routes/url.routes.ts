@@ -9,3 +9,6 @@ export const urlRouter = Router();
 urlRouter.use(authenticate);
 
 urlRouter.post('/', validateRequest(createUrlSchema), UrlController.createUrl);
+urlRouter.get('/', UrlController.getUserUrls);
+urlRouter.get('/:id', UrlController.getUrlById);
+urlRouter.delete('/:id', UrlController.deleteUrl);
