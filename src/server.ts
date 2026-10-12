@@ -1,8 +1,11 @@
 import { app } from './app.js';
 import { env } from './config/env.js';
+import { connectDB } from './lib/db.js';
 
-const startServer = () => {
+const startServer = async() => {
   try {
+    await connectDB();
+
     const server = app.listen(env.PORT, () => {
       console.log(` Server running in ${env.NODE_ENV} mode on http://localhost:${env.PORT}`);
       console.log(` Health check available at http://localhost:${env.PORT}/api/health`);
@@ -10,9 +13,9 @@ const startServer = () => {
 
     
     const shutdown = (signal: string) => {
-      console.log(`\n🛑 Received ${signal}. Shutting down gracefully...`);
+      console.log(`\n Received ${signal}. Shutting down gracefully...`);
       server.close(() => {
-        console.log('💤 HTTP server closed.');
+        console.log('HTTP server closed.');
         process.exit(0);
       });
     };
