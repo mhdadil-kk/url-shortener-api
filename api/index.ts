@@ -1,3 +1,4 @@
+/// <reference path="../src/types/express.d.ts" />
 import type { Request, Response } from 'express';
 import { app } from '../src/app.js';
 import { connectDB } from '../src/lib/db.js';

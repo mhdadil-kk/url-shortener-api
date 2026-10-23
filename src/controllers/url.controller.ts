@@ -1,3 +1,4 @@
+/// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from 'express';
 import { UrlService } from '../services/url.service.js';
 import { AppError } from '../utils/app-error.js';

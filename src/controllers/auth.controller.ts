@@ -1,3 +1,4 @@
+/// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/auth.service.js';
 import { env } from '../config/env.js';

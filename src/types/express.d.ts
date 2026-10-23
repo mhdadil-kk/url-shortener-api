@@ -1,4 +1,4 @@
-import { IUserDocument } from '../models/user.model.js';
+import type { IUserDocument } from '../models/user.model.js';
 
 declare global {
   namespace Express {
