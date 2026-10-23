@@ -26,7 +26,7 @@ export const connectDB = async (): Promise<void> => {
     await mongoose.connect(env.MONGODB_URI);
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
-    process.exit(1); 
+    throw error;
   }
 };
 
