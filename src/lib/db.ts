@@ -3,21 +3,25 @@ import { env } from '../config/env.js';
 
 export const connectDB = async (): Promise<void> => {
   try {
-
     mongoose.set('strictQuery', true);
 
-    
-    mongoose.connection.on('connected', () => {
-      console.log('MongoDB connection established successfully');
-    });
+    if (mongoose.connection.readyState >= 1) {
+      return;
+    }
 
-    mongoose.connection.on('error', (err) => {
-      console.error('MongoDB connection error:', err);
-    });
+    if (mongoose.connection.listenerCount('connected') === 0) {
+      mongoose.connection.on('connected', () => {
+        console.log('MongoDB connection established successfully');
+      });
 
-    mongoose.connection.on('disconnected', () => {
-      console.warn('MongoDB connection disconnected');
-    });
+      mongoose.connection.on('error', (err) => {
+        console.error('MongoDB connection error:', err);
+      });
+
+      mongoose.connection.on('disconnected', () => {
+        console.warn('MongoDB connection disconnected');
+      });
+    }
 
     await mongoose.connect(env.MONGODB_URI);
   } catch (error) {
