@@ -13,7 +13,6 @@ export class AuthController {
         message: result.message,
         data: {
           email: result.email,
-          requiresVerification: true,
         },
       });
     } catch (error) {
@@ -28,7 +27,7 @@ export class AuthController {
       res.cookie('token', token, {
         httpOnly: true,
         secure: env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 2 * 60 * 60 * 1000,
       });
 
@@ -65,7 +64,7 @@ export class AuthController {
       res.cookie('token', token, {
         httpOnly: true,
         secure: env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 2 * 60 * 60 * 1000,
       });
 
@@ -95,7 +94,7 @@ export class AuthController {
     res.clearCookie('token', {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
     });
 
     res.status(200).json({
