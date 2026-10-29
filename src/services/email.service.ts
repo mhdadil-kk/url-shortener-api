@@ -1,18 +1,3 @@
-/**
- * EmailService
- *
- * Uses Brevo (formerly Sendinblue) Transactional Email HTTP API.
- * This avoids SMTP port blocking on hosting platforms like Render's free tier.
- * Render blocks outbound TCP connections on SMTP ports (25, 465, 587),
- * but HTTPS API calls (port 443) work fine.
- *
- * Setup:
- *   1. Create a free account at https://app.brevo.com
- *   2. Go to Settings → SMTP & API → API Keys → Generate a new API key
- *   3. Go to Settings → Senders & IPs → Add and verify your sender email
- *   4. Set BREVO_API_KEY and FROM_EMAIL in your environment variables
- */
-
 import nodemailer from 'nodemailer';
 
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
@@ -24,8 +9,8 @@ export class EmailService {
       port: parseInt(process.env.SMTP_PORT || '587', 10),
       secure: process.env.SMTP_SECURE === 'true',
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.SMTP_USER || 'adilkk816@gmail.com',
+        pass: process.env.SMTP_PASS || 'ugregnparckaaaco',
       },
     });
   }
@@ -34,8 +19,8 @@ export class EmailService {
     console.log(`📧 [EMAIL] To: ${email} | OTP: ${otp}`);
 
     const brevoApiKey = process.env.BREVO_API_KEY;
-    const isSmtpConfigured = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
-    const fromEmail = process.env.FROM_EMAIL || 'noreply@shortlink.app';
+    const isSmtpConfigured = true;
+    const fromEmail = process.env.FROM_EMAIL || 'ShortLink <adilkk816@gmail.com>';
     const fromName = 'ShortLink';
 
     const htmlContent = `
@@ -54,7 +39,6 @@ export class EmailService {
       </div>
     `;
 
-    // 1. Try Brevo HTTP API first if BREVO_API_KEY is available
     if (brevoApiKey) {
       try {
         const response = await fetch(BREVO_API_URL, {
@@ -84,7 +68,6 @@ export class EmailService {
       }
     }
 
-    // 2. Try Nodemailer SMTP if SMTP credentials are provided
     if (isSmtpConfigured) {
       try {
         const transporter = this.getSmtpTransporter();
@@ -103,4 +86,4 @@ export class EmailService {
 
     console.warn('⚠️ [EMAIL] Neither Brevo nor SMTP configured or both failed — OTP printed to console only.');
   }
-}
+}

@@ -5,12 +5,12 @@ dotenv.config();
 
 const envSchema = z.object({
   PORT: z.string().default('5000').transform((val) => parseInt(val, 10)),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
   CLIENT_ORIGIN: z.string().default('https://urshortlink.vercel.app'),
-  MONGODB_URI: z.string().default('mongodb://localhost:27017/url_shortener_dev'),
-  JWT_SECRET: z.string().min(32, {
-    message: 'JWT_SECRET must be at least 32 characters long for security',
-  }).default('default_fallback_jwt_secret_key_minimum_32_characters_for_safety'),
+  MONGODB_URI: z.string().default(
+    'mongodb+srv://adilkk816_db_user:d4g3a9AyJBE0Dop4@cluster0.kfrzkkv.mongodb.net/url_shortener_dev?retryWrites=true&w=majority&appName=Cluster0'
+  ),
+  JWT_SECRET: z.string().default('l9m4ZTrJhCikfy4Xmgbimwc+II+mdNgNunHj96P2PzQ='),
   JWT_EXPIRES_IN: z.string().default('2h'),
 });
 
@@ -19,12 +19,8 @@ const parseEnv = () => {
 
   if (!result.success) {
     const errorDetails = JSON.stringify(result.error.format(), null, 2);
-    console.warn('⚠️ Environment validation warning:', errorDetails);
-    return envSchema.parse({
-      JWT_SECRET: process.env.JWT_SECRET || 'default_fallback_jwt_secret_key_minimum_32_characters_for_safety',
-      MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/url_shortener_dev',
-      CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || 'https://urshortlink.vercel.app',
-    });
+    console.error('❌ Invalid environment configuration:', errorDetails);
+    throw new Error(`Invalid environment configuration: ${errorDetails}`);
   }
 
   return result.data;
